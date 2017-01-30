@@ -1,0 +1,286 @@
+# Description: Program reads and presents a set of .wav files and markers.
+# by Petra van Alphen (p.m.vanalphen@uva.nl). Adapted version of Speech_x
+# by Doug Davidson (doug.davidson@fcdonders.ru.nl)
+# 2012 modified by Anne van Leeuwen (a.r.vanleeuwen1@uu.nl)
+
+
+# Use Mixer DirectXHardware for correct timing wav files!!
+
+# ################################################################
+# Setup and initialize variables
+# ################################################################
+
+# Set up output_port
+if (output_port_manager.port_count() == 0) then
+   term.print( "Forgot to add an output port!" )
+end;
+output_port oport = output_port_manager.get_port( 1 );
+
+# ################################################################
+# Read in stimulus-related information
+# ################################################################
+
+# Read stimulus file name list from a file
+input_file in = new input_file;
+in.open("M:\\jvbproject\\presentation database\\Anne\\A1.txt");
+in.set_delimiter( '\t' );
+ 
+# This is a hack to get the length of the list 
+int i_stmfile = 0;  # Counter for (text) stimulus file
+loop until
+   in.end_of_file() || i_stmfile == 1000 || !in.last_succeeded()
+begin
+   i_stmfile = i_stmfile + 1;   
+end;
+
+# Set up a vector of .wav file names using the length
+array <string> wavfile[i_stmfile];
+array <int> expcode[i_stmfile];
+array <int> cwonset[i_stmfile];
+array <int> cwoffset[i_stmfile];
+array <int> dummy[i_stmfile];
+array <int> bloknr[i_stmfile];
+array <int> cond[i_stmfile];
+array <int> itemnr[i_stmfile]; 
+
+
+# Now read in the actual filenames and all timing info from the file
+i_stmfile = 0;  # Counter for (text) stimulus file
+loop until
+   in.end_of_file() || i_stmfile == 1000 || !in.last_succeeded()
+begin
+   i_stmfile = i_stmfile + 1;
+	cond[i_stmfile] = in.get_int();
+	itemnr[i_stmfile] = in.get_int();
+	bloknr[i_stmfile] = in.get_int();
+	expcode[i_stmfile] = in.get_int();
+	cwonset[i_stmfile] = in.get_int();
+	cwoffset[i_stmfile] = in.get_int();
+	dummy[i_stmfile] = in.get_int(); 
+	wavfile[i_stmfile] = in.get_string();
+	
+end;
+
+# Close the file
+in.close();
+
+
+# ################################################################
+# Main trial definition
+# ################################################################
+
+# First present starting screen
+# list which trails you want to do
+startexp.present();
+payattention.present();
+ 
+# Present the main sequence for this series
+loop
+   int i_trial = 1
+until
+   i_trial > i_stmfile
+begin
+  
+# Set the filename and load it
+   string f = wavfile[i_trial] + "_48000.wav";
+   s.set_filename( f );  
+   s.load();
+ 
+# Set integer variables
+	int lab1 = cwonset[i_trial];
+	int lab2 = cwoffset[i_trial];
+	int lab3 = dummy [i_trial]; 
+	
+	
+# Set nr of block as code 
+   eventblok.set_port_code (bloknr[i_trial]);
+	
+# Set the .wav as the current stm    
+	wavevent.set_stimulus( snd ); 
+   wavevent.set_event_code(wavfile[i_trial]);
+	
+# Set the delay time for nothing event (= three critical markers)
+	eventlab1.set_deltat (lab1);
+	eventlab2.set_deltat (lab2);
+	eventlab1.set_deltat (lab1); 
+
+# set itemnr as portcode (on dummy timing)
+	eventlab1.set_port_code (itemnr[i_trial]);
+	
+# set codes for different conditions
+	if (cond[i_trial]==11) then;
+		wavevent.set_port_code (011);
+		eventlab1.set_port_code (111);
+		eventlab2.set_port_code (211);
+	end;
+	
+	if (cond[i_trial]==12) then;
+		wavevent.set_port_code (012);
+		eventlab1.set_port_code (112);
+		eventlab2.set_port_code (212);
+	end;
+	
+	if (cond[i_trial]==13) then;
+		wavevent.set_port_code (013);
+		eventlab1.set_port_code (113);
+		eventlab2.set_port_code (213);
+	end;
+	
+	if (cond[i_trial]==14) then;
+		wavevent.set_port_code (014);
+		eventlab1.set_port_code (114);
+		eventlab2.set_port_code (214);
+	end;
+	
+	if (cond[i_trial]==21) then;
+		wavevent.set_port_code (021);
+		eventlab1.set_port_code (121);
+		eventlab2.set_port_code (221);
+	end;
+	
+	if (cond[i_trial]==22) then;
+		wavevent.set_port_code (022);
+		eventlab1.set_port_code (122);
+		eventlab2.set_port_code (222);
+	end;
+
+	if (cond[i_trial]==23) then;
+		wavevent.set_port_code (023);
+		eventlab1.set_port_code (123);
+		eventlab2.set_port_code (223);
+	end;
+
+	if (cond[i_trial]==24) then;
+		wavevent.set_port_code (024);
+		eventlab1.set_port_code (124);
+		eventlab2.set_port_code (224);
+	end;
+
+	if (cond[i_trial]==31) then;
+		wavevent.set_port_code (031);
+		eventlab1.set_port_code (131);
+		eventlab2.set_port_code (231);
+	end;
+
+	if (cond[i_trial]==32) then;
+		wavevent.set_port_code (032);
+		eventlab1.set_port_code (132);
+		eventlab2.set_port_code (232);
+	end;	
+	
+	if (cond[i_trial]==33) then;
+		wavevent.set_port_code (033);
+		eventlab1.set_port_code (133);
+		eventlab2.set_port_code (233);
+	end;		
+	
+	if (cond[i_trial]==34) then;
+		wavevent.set_port_code (034);
+		eventlab1.set_port_code (134);
+		eventlab2.set_port_code (234);
+	end;	
+	
+	if (cond[i_trial]==17) then;
+		wavevent.set_port_code (017);
+		eventlab1.set_port_code (117);
+		eventlab2.set_port_code (217);
+	end;	
+	
+	if (cond[i_trial]==27) then;
+		wavevent.set_port_code (027);
+		eventlab1.set_port_code (127);
+		eventlab2.set_port_code (227);
+	end;	
+
+	if (cond[i_trial]==37) then;
+		wavevent.set_port_code (037);
+		eventlab1.set_port_code (137);
+		eventlab2.set_port_code (237);
+	end;	
+	
+		if (cond[i_trial]==19) then;
+		wavevent.set_port_code (019);
+		eventlab1.set_port_code (119);
+		eventlab2.set_port_code (219);
+	end;	
+	
+	if (cond[i_trial]==29) then;
+		wavevent.set_port_code (029);
+		eventlab1.set_port_code (129);
+		eventlab2.set_port_code (229);
+	end;	
+
+	if (cond[i_trial]==39) then;
+		wavevent.set_port_code (039);
+		eventlab1.set_port_code (139);
+		eventlab2.set_port_code (239);
+	end;	
+		
+	if (cond[i_trial]==0) then;
+		wavevent.set_port_code (010);
+		eventlab1.set_port_code (110);
+		eventlab2.set_port_code (210);
+	end;
+			
+			
+# Play the .wav    
+   playsent.present();
+
+# End of practice	
+	if (expcode[i_trial]== 9) then;
+	
+	endpractice.present();
+	starttest.present();
+	payattention.present();
+	end;
+	
+# Small break
+	if (expcode[i_trial]== 1) then;
+	break1a.present();
+	break1b.present();
+	payattention.present();
+end;
+
+	if (expcode[i_trial]== 2) then;
+	break2a.present();
+	break2b.present();
+	payattention.present();
+end;	
+
+	if (expcode[i_trial]== 3) then;
+	break3a.present();
+	break3b.present();
+	payattention.present();
+end;	
+
+	if (expcode[i_trial]== 4) then;
+	break4a.present();
+	break4b.present();
+	payattention.present();
+end;	
+
+	if (expcode[i_trial]== 5) then;
+	break5a.present();
+	break5b.present();
+	payattention.present();
+end;	
+
+	
+# End of experiment
+	if (expcode[i_trial]==99)then;
+   endexp.present();
+   end;
+
+# Time to blink followed by a plus sign during which ss can press fot the next sentence		
+	if (expcode[i_trial]==0) then;   
+	blink.present();   
+   end;
+   
+   
+# Unload the wavfile and increment the trial     
+   s.unload();
+   i_trial = i_trial + 1 ;
+   
+	
+end
+      
